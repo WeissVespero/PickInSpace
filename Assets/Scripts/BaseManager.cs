@@ -62,11 +62,11 @@ public class BaseManager : MonoBehaviour
         }
     }
 
-    public Drone FindFreeDrone()
+    public Drone FindFreeDrone(Resource resource)
     {
         var drone = _basePool.GetFreeDrone();
         if (drone == null || drone.CurrentState != Drone.DroneState.Idle) return null;
-        drone.StartDroneCycle();
+        drone.StartDroneCycle(resource);
         return drone;
     }
 }

@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 8859888759668441114}
   - component: {fileID: 5295647868801969401}
   - component: {fileID: 1761995108973429733}
+  - component: {fileID: 1631691749670997416}
   m_Layer: 0
   m_Name: Drone
   m_TagString: Untagged
@@ -141,9 +142,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 699da30f8b97b914aa85e645a3acd0d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CurrentState: 1
+  CurrentState: 0
   moveSpeed: 5
   collectTime: 2
   fractionTag: 
   navMeshAgent: {fileID: 5295647868801969401}
   _meshRenderer: {fileID: 6379087284480994631}
+  _animator: {fileID: 1631691749670997416}
+--- !u!95 &1631691749670997416
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1504487354042009237}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 1c9d5fe4e396c924293fc7ed07955e0e, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0

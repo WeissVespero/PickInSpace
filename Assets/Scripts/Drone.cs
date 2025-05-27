@@ -14,12 +14,14 @@ public class Drone : MonoBehaviour
 
     [SerializeField] private NavMeshAgent navMeshAgent;
     [SerializeField] private MeshRenderer _meshRenderer;
+    [SerializeField] private Animator _animator;
+    
 
-    private Transform targetResource;
+    private Resource _targetResource;
     private Transform _placeHolder;
     private float collectionTimer;
 
-    private GameObject carriedResource; // Подобранный ресурс
+    //private GameObject carriedResource; // Подобранный ресурс
 
     public void Initialize(Color color, Transform placeHolder)
     {
@@ -41,15 +43,18 @@ public class Drone : MonoBehaviour
                 SearchForNearestResource();
                 break;
             case DroneState.MovingToResource:
-                MoveToTarget(targetResource.position);
-                if (Vector3.Distance(transform.position, targetResource.position) < navMeshAgent.stoppingDistance + 0.1f)
+                var targetPos = _targetResource.transform.position;
+                MoveToTarget(targetPos);
+                if (Vector3.Distance(transform.position, targetPos) < navMeshAgent.stoppingDistance + 0.1f)
                 {
+                    _targetResource.IsOwnedChanged -= OnTargetResourceIsBusy;
+                    _targetResource.SetBusy(true);
                     CurrentState = DroneState.CollectingResource;
                     collectionTimer = collectTime;
                 }
                 break;
             case DroneState.CollectingResource:
-                print("collecting begin");
+               
                 collectionTimer -= Time.deltaTime;
                 if (collectionTimer <= 0)
                 {
@@ -66,9 +71,10 @@ public class Drone : MonoBehaviour
                 break;
             case DroneState.UnloadingResource:
                 UnloadResource();
-                CurrentState = DroneState.Idle; // После отгрузки. Может нужен SearchingForResource????
+                CurrentState = DroneState.SearchingForResource; // После отгрузки. Может нужен SearchingForResource????
                 break;
             case DroneState.Idle:
+                _animator.SetBool("Fly", false);
                 // Дрон просто стоит на базе
                 break;
         }
@@ -76,23 +82,24 @@ public class Drone : MonoBehaviour
 
     void SearchForNearestResource()
     {
-        GameObject[] resources = GameObject.FindGameObjectsWithTag("Resource");
-        Transform nearestResource = null;
+        Resource nearestResource = null;
         float minDistance = Mathf.Infinity;
 
-        foreach (GameObject resource in resources)
+        foreach (Resource resource in ResourcePool.SharedInstance._resources)
         {
+            if (resource.IsBusy) continue;
             float distance = Vector3.Distance(transform.position, resource.transform.position);
             if (distance < minDistance)
             {
                 minDistance = distance;
-                nearestResource = resource.transform;
+                nearestResource = resource;
             }
         }
 
         if (nearestResource != null)
         {
-            targetResource = nearestResource;
+            _targetResource = nearestResource;
+            _targetResource.IsOwnedChanged += OnTargetResourceIsBusy;
             CurrentState = DroneState.MovingToResource;
         }
         else
@@ -107,73 +114,66 @@ public class Drone : MonoBehaviour
         {
             if (!navMeshAgent.isOnNavMesh)
             {
-                // Re-enable NavMeshAgent if it somehow got disabled or off-mesh
-                // This can happen if the drone is moved by other forces (e.g., avoidance)
-                // and then tries to pathfind again.
-                // For a more robust solution, ensure your environment's NavMesh covers all drone movement areas.
+                
                 return;
             }
             navMeshAgent.SetDestination(targetPosition);
-            // Optionally, visualize path if enabled in UI
-            // You'd need to draw this separately, NavMeshAgent doesn't inherently draw its path.
+            _animator.SetBool("Fly", true);
         }
         else
         {
-            // Simple direct movement if not using NavMesh
             transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
         }
     }
 
     void CollectResource()
     {
-        if (targetResource != null)
+        if (_targetResource != null)
         {
+            
             // Visual effect for collection
-            SpawnCollectionEffect(targetResource.position);
-
-            // "Collect" the resource:
-            // 1. Mark it as collected (e.g., destroy it or pool it)
-            // 2. Associate it with the drone (e.g., parent it to drone, or just store a reference)
-            carriedResource = targetResource.gameObject; // Now the drone "carries" it
-            carriedResource.SetActive(false); // Make it disappear from the scene
-            targetResource = null; // Clear target
+            _animator.SetTrigger("Res");
+            SpawnCollectionEffect(_targetResource.transform.position);
+            
+            _targetResource.gameObject.SetActive(false);
+           
         }
     }
 
     void UnloadResource()
     {
-        if (carriedResource != null)
+        if (_targetResource != null)
         {
-            // Visual effect for unloading
             SpawnUnloadEffect(transform.position);
 
-            // Dispose of the carried resource (e.g., destroy it, or return to object pool)
-            Destroy(carriedResource);
-            carriedResource = null;
+            _targetResource = null;
         }
     }
 
     void SpawnCollectionEffect(Vector3 position)
     {
-        // Implement particles, flash, scale effect here
-        // Example: Instantiate(collectionParticlesPrefab, position, Quaternion.identity);
         Debug.Log("Collection Effect at: " + position);
     }
 
     void SpawnUnloadEffect(Vector3 position)
     {
-        // Implement particles, flash, scale effect here
-        // Example: Instantiate(unloadParticlesPrefab, position, Quaternion.identity);
         Debug.Log("Unload Effect at: " + position);
     }
 
-    
-
-
-    // Call this from GameManager to start the drone's cycle
-    public void StartDroneCycle()
+    public void StartDroneCycle(Resource resource)
     {
         CurrentState = DroneState.SearchingForResource;
+    }
+
+    private void OnTargetResourceIsBusy()
+    {
+        if (_targetResource.IsBusy)
+        {
+            CurrentState = DroneState.MovingToBase;
+            _targetResource.IsOwnedChanged -= OnTargetResourceIsBusy;
+            _targetResource = null;
+        }
+        
     }
 
     // You'll need to set the speed from the UI

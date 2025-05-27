@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6853352158408388935}
   - component: {fileID: 5812034011994747826}
   - component: {fileID: 8291024156839655717}
+  - component: {fileID: 1485888129724492621}
   m_Layer: 0
   m_Name: ResourceCube
   m_TagString: Resource
@@ -105,3 +106,17 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1485888129724492621
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9191624426666538355}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc5e16ce67a3f6847a7804a2fa68b3f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IsOnBoard: 0
+  IsBusy: 0

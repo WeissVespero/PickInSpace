@@ -9,8 +9,8 @@ public class ResourcePool : MonoBehaviour
     public static ResourcePool SharedInstance;
     public int AmountToPool;
     [SerializeField] private Transform _resourcesTransform;
-    [SerializeField] private GameObject _resourcePrefab;
-    [SerializeField] private List<GameObject> _resources;
+    [SerializeField] private Resource _resourcePrefab;
+    public List<Resource> _resources;
 
     private void Awake()
     {
@@ -19,21 +19,20 @@ public class ResourcePool : MonoBehaviour
 
     private void Start()
     {
-        _resources = new List<GameObject>();
-        GameObject tmp;
+        _resources = new List<Resource>();
         for (int i = 0; i < AmountToPool; i++)
         {
-            tmp = Instantiate(_resourcePrefab, _resourcesTransform);
-            tmp.SetActive(false);
-            _resources.Add(tmp);
+            var resource = Instantiate(_resourcePrefab, _resourcesTransform);
+            resource.gameObject.SetActive(false);
+            _resources.Add(resource);
         }
     }
 
-    public GameObject GetPooledObject()
+    public Resource GetPooledObject()
     {
         for (int i = 0; i < AmountToPool; i++)
         {
-            if (!_resources[i].activeInHierarchy)
+            if (!_resources[i].gameObject.activeInHierarchy)
             {
                 return _resources[i];
             }

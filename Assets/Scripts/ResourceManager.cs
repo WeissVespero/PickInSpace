@@ -12,7 +12,7 @@ public class ResourceManager : MonoBehaviour
     private float _xRange, _zRange;
     public float SpawnTime; // Менять через поле ввода
 
-    public event Action ResourceSpawned;
+    public event Action<Resource> ResourceSpawned;
 
     public void Initialize()
     {
@@ -23,7 +23,7 @@ public class ResourceManager : MonoBehaviour
 
     IEnumerator ResourcesSpawn()
     {
-        GameObject tmp;
+        
         while (true)
         {
             yield return new WaitForSeconds(SpawnTime);
@@ -32,12 +32,12 @@ public class ResourceManager : MonoBehaviour
             var inBoundsPosition = new Vector3(xRand, 0, zRand);
             var spawnPosition = inBoundsPosition + _bounds.center;
             
-            tmp = ResourcePool.SharedInstance.GetPooledObject();
-            if (tmp != null)
+            var resource = ResourcePool.SharedInstance.GetPooledObject();
+            if (resource != null)
             {
-                tmp.transform.position = spawnPosition;
-                tmp.SetActive(true);
-                ResourceSpawned?.Invoke();
+                resource.transform.position = spawnPosition;
+                resource.gameObject.SetActive(true);
+                ResourceSpawned?.Invoke(resource);
             }
         }
     }

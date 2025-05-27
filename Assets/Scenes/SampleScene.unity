@@ -1341,7 +1341,7 @@ MonoBehaviour:
     m_Extent: {x: 14, y: 1, z: 10}
   _leftBotPoint: {fileID: 993841665}
   _rightTopPoint: {fileID: 960543690}
-  SpawnTime: 5
+  SpawnTime: 0.5
 --- !u!114 &1589888228
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1356,7 +1356,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AmountToPool: 10
   _resourcesTransform: {fileID: 636222490}
-  _resourcePrefab: {fileID: 9191624426666538355, guid: a36f7f3c75ad23c48a9cf2c259ffb03a, type: 3}
+  _resourcePrefab: {fileID: 1485888129724492621, guid: a36f7f3c75ad23c48a9cf2c259ffb03a, type: 3}
   _resources: []
 --- !u!1 &1716674635
 GameObject:

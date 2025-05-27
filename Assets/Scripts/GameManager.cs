@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
         _base1.Initialize(3);
         _base2.Initialize(3);
         _resourceManager.Initialize();
+        Subscribe();
     }
 
     private void Subscribe()
@@ -21,9 +22,9 @@ public class GameManager : MonoBehaviour
         _resourceManager.ResourceSpawned += FindFreeDrone;
     }
 
-    private void FindFreeDrone()
+    private void FindFreeDrone(Resource resource)
     {
-        _base1.FindFreeDrone();
-        _base2.FindFreeDrone();
+        _base1.FindFreeDrone(resource);
+        _base2.FindFreeDrone(resource);
     }
 }
