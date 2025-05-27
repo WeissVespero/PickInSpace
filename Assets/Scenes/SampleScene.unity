@@ -245,7 +245,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   amountToPool: 3
-  amountOfActive: 0
   _baseTransform: {fileID: 224401059}
   _dronePrefab: {fileID: 1761995108973429733, guid: 764e4cbc676b22e4180317f14cd1f9a3, type: 3}
   _drones: []
@@ -270,6 +269,8 @@ MonoBehaviour:
   _basePool: {fileID: 224401060}
   _color: {r: 0.013483422, g: 0.9528302, b: 0.07259729, a: 0}
   _meshRenderer: {fileID: 224401057}
+  fractionTag: 
+  amountOfActive: 0
 --- !u!1 &380174063
 GameObject:
   m_ObjectHideFlags: 0
@@ -410,6 +411,8 @@ MonoBehaviour:
   _basePool: {fileID: 596164125}
   _color: {r: 0.9519105, g: 1, b: 0, a: 0}
   _meshRenderer: {fileID: 596164127}
+  fractionTag: 
+  amountOfActive: 0
 --- !u!114 &596164125
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -423,7 +426,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   amountToPool: 3
-  amountOfActive: 0
   _baseTransform: {fileID: 596164129}
   _dronePrefab: {fileID: 1761995108973429733, guid: 764e4cbc676b22e4180317f14cd1f9a3, type: 3}
   _drones: []
@@ -854,7 +856,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _base1: {fileID: 224401061}
   _base2: {fileID: 596164124}
-  _resourceManager: {fileID: 0}
+  _resourceManager: {fileID: 1589888227}
 --- !u!1 &960543689
 GameObject:
   m_ObjectHideFlags: 0

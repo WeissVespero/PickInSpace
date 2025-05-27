@@ -6,7 +6,6 @@ using UnityEngine.AI;
 public class BasePool : MonoBehaviour
 {
     public int amountToPool;
-    public int amountOfActive; // Меняется ползунком
 
     [SerializeField] private Transform _baseTransform;
     [SerializeField] private Drone _dronePrefab;
@@ -24,7 +23,17 @@ public class BasePool : MonoBehaviour
         }
     }
 
-
+    public Drone GetFreeDrone()
+    {
+        for (int i = 0; i < amountToPool; i++)
+        {
+            if (_drones[i].gameObject.activeInHierarchy && _drones[i].CurrentState == Drone.DroneState.Idle)
+            {
+                return _drones[i];
+            }
+        }
+        return null;
+    }
 
     public Drone GetPooledObject()
     {
