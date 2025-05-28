@@ -10,12 +10,13 @@ public class Drone : MonoBehaviour
 
     public float moveSpeed = 5f; // Меняется ползунком
     public float collectTime = 2f;
-    public string fractionTag;
+    public Fraction fractionTag;
 
     [SerializeField] private NavMeshAgent navMeshAgent;
     [SerializeField] private MeshRenderer _meshRenderer;
     [SerializeField] private Animator _animator;
-    
+
+    public BaseManager _myBase;
 
     private Resource _targetResource;
     private Transform _placeHolder;
@@ -23,10 +24,12 @@ public class Drone : MonoBehaviour
 
     //private GameObject carriedResource; // Подобранный ресурс
 
-    public void Initialize(Color color, Transform placeHolder)
+    public void Initialize(Fraction fraction, Color color, Transform placeHolder)
     {
+        fractionTag = fraction;
         _placeHolder = placeHolder;
         _meshRenderer.material.color = color;
+
         transform.position = placeHolder.position;
     }
 
@@ -47,14 +50,15 @@ public class Drone : MonoBehaviour
                 MoveToTarget(targetPos);
                 if (Vector3.Distance(transform.position, targetPos) < navMeshAgent.stoppingDistance + 0.1f)
                 {
-                    _targetResource.IsOwnedChanged -= OnTargetResourceIsBusy;
+                    _targetResource.IsBusyChanged -= OnTargetResourceIsBusy;
                     _targetResource.SetBusy(true);
+                    _animator.SetTrigger("Res");
                     CurrentState = DroneState.CollectingResource;
                     collectionTimer = collectTime;
                 }
                 break;
             case DroneState.CollectingResource:
-               
+                
                 collectionTimer -= Time.deltaTime;
                 if (collectionTimer <= 0)
                 {
@@ -74,7 +78,7 @@ public class Drone : MonoBehaviour
                 CurrentState = DroneState.SearchingForResource; // После отгрузки. Может нужен SearchingForResource????
                 break;
             case DroneState.Idle:
-                _animator.SetBool("Fly", false);
+                _animator.SetBool("IsFly", false);
                 // Дрон просто стоит на базе
                 break;
         }
@@ -87,7 +91,7 @@ public class Drone : MonoBehaviour
 
         foreach (Resource resource in ResourcePool.SharedInstance._resources)
         {
-            if (resource.IsBusy) continue;
+            if (resource.IsBusy || !resource.gameObject.activeInHierarchy) continue;
             float distance = Vector3.Distance(transform.position, resource.transform.position);
             if (distance < minDistance)
             {
@@ -99,7 +103,7 @@ public class Drone : MonoBehaviour
         if (nearestResource != null)
         {
             _targetResource = nearestResource;
-            _targetResource.IsOwnedChanged += OnTargetResourceIsBusy;
+            _targetResource.IsBusyChanged += OnTargetResourceIsBusy;
             CurrentState = DroneState.MovingToResource;
         }
         else
@@ -118,7 +122,7 @@ public class Drone : MonoBehaviour
                 return;
             }
             navMeshAgent.SetDestination(targetPosition);
-            _animator.SetBool("Fly", true);
+            _animator.SetBool("IsFly", true);
         }
         else
         {
@@ -132,7 +136,7 @@ public class Drone : MonoBehaviour
         {
             
             // Visual effect for collection
-            _animator.SetTrigger("Res");
+            
             SpawnCollectionEffect(_targetResource.transform.position);
             
             _targetResource.gameObject.SetActive(false);
@@ -145,8 +149,9 @@ public class Drone : MonoBehaviour
         if (_targetResource != null)
         {
             SpawnUnloadEffect(transform.position);
-
+            _targetResource.SetBusy(false);
             _targetResource = null;
+            _myBase.AddResource(fractionTag);
         }
     }
 
@@ -170,7 +175,7 @@ public class Drone : MonoBehaviour
         if (_targetResource.IsBusy)
         {
             CurrentState = DroneState.MovingToBase;
-            _targetResource.IsOwnedChanged -= OnTargetResourceIsBusy;
+            _targetResource.IsBusyChanged -= OnTargetResourceIsBusy;
             _targetResource = null;
         }
         

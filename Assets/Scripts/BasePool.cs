@@ -6,6 +6,7 @@ using UnityEngine.AI;
 public class BasePool : MonoBehaviour
 {
     public int amountToPool;
+    public BaseManager MyBase;
 
     [SerializeField] private Transform _baseTransform;
     [SerializeField] private Drone _dronePrefab;
@@ -19,6 +20,7 @@ public class BasePool : MonoBehaviour
         {
             tmp = Instantiate(_dronePrefab, _baseTransform);
             tmp.gameObject.SetActive(false);
+            tmp._myBase = MyBase;
             _drones.Add(tmp);
         }
     }

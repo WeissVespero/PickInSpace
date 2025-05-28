@@ -7,13 +7,13 @@ public class Resource : MonoBehaviour
 {
     public bool IsBusy {  get; private set; }
 
-    public event Action IsOwnedChanged;
+    public event Action IsBusyChanged;
 
-    public void SetBusy(bool isOwned)
+    public void SetBusy(bool isBusy)
     {
-        if (isOwned == IsBusy) return;
-        IsBusy = isOwned;
-        IsOwnedChanged?.Invoke();
+        if (isBusy == IsBusy) return;
+        IsBusy = isBusy;
+        IsBusyChanged?.Invoke();
     }
 
 }

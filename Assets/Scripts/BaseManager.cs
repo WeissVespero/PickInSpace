@@ -10,10 +10,10 @@ public class BaseManager : MonoBehaviour
     [SerializeField] private MeshRenderer _meshRenderer;
     private int collectedResourcesCount = 0;
 
-    public string fractionTag;
+    public Fraction FractionTag;
     public int amountOfActive; // Меняется ползунком
 
-    public delegate void OnResourceCollected(string fraction, int count);
+    public delegate void OnResourceCollected(Fraction fraction, int count);
     public static event OnResourceCollected onResourceCollected;
 
     private void Start()
@@ -34,7 +34,7 @@ public class BaseManager : MonoBehaviour
             var drone = _basePool.GetPooledObject();
             if (drone == null) continue;
             var placeHolder = _dronePlaceHolders[i];
-            drone.Initialize(_color, placeHolder);
+            drone.Initialize(FractionTag, _color, placeHolder);
         }
     }
 
@@ -43,22 +43,22 @@ public class BaseManager : MonoBehaviour
         return collectedResourcesCount;
     }
 
-    public void AddResource(string deliveredFactionTag)
+    public void AddResource(Fraction deliveredFactionTag)
     {
-        if (deliveredFactionTag == fractionTag)
+        if (deliveredFactionTag == FractionTag)
         {
             collectedResourcesCount++;
-            Debug.Log($"{fractionTag} Base: Collected {collectedResourcesCount} resources.");
+            Debug.Log($"{FractionTag} Base: Collected {collectedResourcesCount} resources.");
 
             // Notify UI
             if (onResourceCollected != null)
             {
-                onResourceCollected(fractionTag, collectedResourcesCount);
+                onResourceCollected(FractionTag, collectedResourcesCount);
             }
         }
         else
         {
-            Debug.LogWarning($"Drone from {deliveredFactionTag} tried to deliver to {fractionTag} base!");
+            Debug.LogWarning($"Drone from {deliveredFactionTag} tried to deliver to {FractionTag} base!");
         }
     }
 
@@ -69,4 +69,10 @@ public class BaseManager : MonoBehaviour
         drone.StartDroneCycle(resource);
         return drone;
     }
+}
+
+public enum Fraction
+{
+    Yellow,
+    Green
 }

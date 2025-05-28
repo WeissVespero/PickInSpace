@@ -33,7 +33,7 @@ public class ResourceManager : MonoBehaviour
             var spawnPosition = inBoundsPosition + _bounds.center;
             
             var resource = ResourcePool.SharedInstance.GetPooledObject();
-            if (resource != null)
+            if (resource != null && !resource.IsBusy)
             {
                 resource.transform.position = spawnPosition;
                 resource.gameObject.SetActive(true);
